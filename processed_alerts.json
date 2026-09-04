@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "type": "temperature",
+        "message": "Temperature is above threshold",
+        "severity": "high",
+        "timestamp": "2026-09-04T18:00:00",
+        "action": "HIGH PRIORITY ALERT",
+        "processed_at": "2026-09-04T20:54:01.812823"
+    },
+    {
+        "id": 2,
+        "type": "system",
+        "message": "System health check completed",
+        "severity": "low",
+        "timestamp": "2026-09-04T18:05:00",
+        "action": "NORMAL",
+        "processed_at": "2026-09-04T20:54:01.812823"
+    },
+    {
+        "id": 3,
+        "type": "security",
+        "message": "Unauthorized access detected",
+        "severity": "critical",
+        "timestamp": "2026-09-04T18:10:00",
+        "action": "IMMEDIATE ACTION REQUIRED",
+        "processed_at": "2026-09-04T20:54:01.812823"
+    }
+]
