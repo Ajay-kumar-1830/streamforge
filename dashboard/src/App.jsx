@@ -1,122 +1,152 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+
+const API_URL = "http://127.0.0.1:5000";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [alerts, setAlerts] = useState([]);
+  const [metrics, setMetrics] = useState({
+    total: 0,
+    critical: 0,
+    high: 0,
+    medium: 0,
+    low: 0,
+  });
+  const [status, setStatus] = useState("Checking...");
+  const [processing, setProcessing] = useState(false);
+
+  const loadData = async () => {
+    try {
+      const health = await fetch(`${API_URL}/health`);
+      const healthData = await health.json();
+
+      setStatus(healthData.status);
+
+      const response = await fetch(`${API_URL}/alerts`);
+      const data = await response.json();
+
+      setAlerts(data.alerts || []);
+      setMetrics(data.metrics || {});
+    } catch (error) {
+      console.error(error);
+      setStatus("API Offline");
+    }
+  };
+
+  const runPipeline = async () => {
+    try {
+      setProcessing(true);
+
+      const response = await fetch(`${API_URL}/process`, {
+        method: "POST",
+      });
+
+      const data = await response.json();
+
+      setAlerts(data.data.alerts || []);
+      setMetrics(data.data.metrics || {});
+      setStatus("healthy");
+    } catch (error) {
+      console.error(error);
+      setStatus("Pipeline Error");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+
+    const interval = setInterval(loadData, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+    <div className="app">
+      <header>
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
+          <h1>StreamForge</h1>
+          <p>Real-Time Alert Processing Dashboard</p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="status">
+          <span className="dot"></span>
+          {status}
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <main>
+        <section className="metrics">
+          <div className="card">
+            <h3>Total Alerts</h3>
+            <strong>{metrics.total}</strong>
+          </div>
+
+          <div className="card critical">
+            <h3>Critical</h3>
+            <strong>{metrics.critical}</strong>
+          </div>
+
+          <div className="card high">
+            <h3>High</h3>
+            <strong>{metrics.high}</strong>
+          </div>
+
+          <div className="card medium">
+            <h3>Medium</h3>
+            <strong>{metrics.medium}</strong>
+          </div>
+
+          <div className="card low">
+            <h3>Low</h3>
+            <strong>{metrics.low}</strong>
+          </div>
+        </section>
+
+        <section className="alerts-section">
+          <div className="section-header">
+            <h2>Recent Alerts</h2>
+
+            <div>
+              <button onClick={loadData}>Refresh</button>
+
+              <button
+                onClick={runPipeline}
+                disabled={processing}
+                style={{ marginLeft: "10px" }}
+              >
+                {processing ? "Processing..." : "Run Pipeline"}
+              </button>
+            </div>
+          </div>
+
+          {alerts.length === 0 ? (
+            <p className="empty">No alerts available.</p>
+          ) : (
+            <div className="alert-list">
+              {alerts.map((alert) => (
+                <div className="alert" key={alert.id}>
+                  <div>
+                    <h3>{alert.type}</h3>
+                    <p>{alert.message}</p>
+                    <small>{alert.timestamp}</small>
+                  </div>
+
+                  <div className="alert-right">
+                    <span className={`badge ${alert.severity}`}>
+                      {alert.severity.toUpperCase()}
+                    </span>
+                    <p>{alert.action}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;

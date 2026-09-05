@@ -4,7 +4,7 @@ import json
 import sys
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.append(str(BASE_DIR))
+sys.path.insert(0, str(BASE_DIR))
 
 from stream_processor.pipeline import run_pipeline
 from state.state_manager import load_state
@@ -13,12 +13,19 @@ from state.state_manager import load_state
 app = Flask(__name__)
 
 
+@app.after_request
+def add_cors(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return response
+
+
 @app.route("/")
 def home():
     return jsonify({
         "project": "StreamForge",
-        "status": "running",
-        "message": "Real-time alert processing API"
+        "status": "running"
     })
 
 
@@ -30,23 +37,21 @@ def health():
 
 
 @app.route("/alerts")
-def get_alerts():
+def alerts():
     file_path = BASE_DIR / "pipeline_results.json"
 
     if not file_path.exists():
         return jsonify({
             "alerts": [],
-            "message": "No processed alerts available"
+            "metrics": {}
         })
 
     with open(file_path, "r", encoding="utf-8") as file:
-        data = json.load(file)
-
-    return jsonify(data)
+        return jsonify(json.load(file))
 
 
 @app.route("/metrics")
-def get_metrics():
+def metrics():
     file_path = BASE_DIR / "pipeline_results.json"
 
     if not file_path.exists():
@@ -65,28 +70,44 @@ def get_metrics():
 
 
 @app.route("/state")
-def get_state():
+def state():
     return jsonify(load_state())
 
 
 @app.route("/process", methods=["POST"])
-def process_alerts():
-    run_pipeline(5)
+def process():
+    try:
+        run_pipeline(5)
 
-    file_path = BASE_DIR / "pipeline_results.json"
+        file_path = BASE_DIR / "pipeline_results.json"
 
-    with open(file_path, "r", encoding="utf-8") as file:
-        data = json.load(file)
+        if not file_path.exists():
+            return jsonify({
+                "success": False,
+                "message": "Pipeline did not create results"
+            }), 500
 
-    return jsonify({
-        "message": "Pipeline executed successfully",
-        "data": data
-    })
+        with open(file_path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        return jsonify({
+            "success": True,
+            "message": "Pipeline executed successfully",
+            "data": data
+        })
+
+    except Exception as error:
+        print("PIPELINE ERROR:", error)
+
+        return jsonify({
+            "success": False,
+            "message": str(error)
+        }), 500
 
 
 if __name__ == "__main__":
     app.run(
-        host="0.0.0.0",
+        host="127.0.0.1",
         port=5000,
-        debug=True
+        debug=False
     )
