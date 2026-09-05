@@ -2,55 +2,55 @@
     "alerts": [
         {
             "id": 1,
-            "type": "network",
-            "message": "Network activity detected",
-            "severity": "low",
-            "timestamp": "2026-09-05T20:51:16.314061",
-            "action": "NORMAL",
-            "processed_at": "2026-09-05T20:51:16.314061"
+            "type": "temperature",
+            "message": "Temperature threshold exceeded",
+            "severity": "medium",
+            "timestamp": "2026-09-05T21:00:17.576250",
+            "action": "MONITOR ALERT",
+            "processed_at": "2026-09-05T21:00:17.576250"
         },
         {
             "id": 2,
-            "type": "system",
-            "message": "System health check completed",
-            "severity": "critical",
-            "timestamp": "2026-09-05T20:51:16.314061",
-            "action": "IMMEDIATE ACTION REQUIRED",
-            "processed_at": "2026-09-05T20:51:16.314061"
+            "type": "network",
+            "message": "Network activity detected",
+            "severity": "low",
+            "timestamp": "2026-09-05T21:00:17.576250",
+            "action": "NORMAL",
+            "processed_at": "2026-09-05T21:00:17.576250"
         },
         {
             "id": 3,
-            "type": "temperature",
-            "message": "Temperature threshold exceeded",
-            "severity": "critical",
-            "timestamp": "2026-09-05T20:51:16.314061",
-            "action": "IMMEDIATE ACTION REQUIRED",
-            "processed_at": "2026-09-05T20:51:16.314061"
+            "type": "security",
+            "message": "Unauthorized access detected",
+            "severity": "low",
+            "timestamp": "2026-09-05T21:00:17.576250",
+            "action": "NORMAL",
+            "processed_at": "2026-09-05T21:00:17.576250"
         },
         {
             "id": 4,
-            "type": "system",
-            "message": "System health check completed",
-            "severity": "high",
-            "timestamp": "2026-09-05T20:51:16.314061",
-            "action": "HIGH PRIORITY ALERT",
-            "processed_at": "2026-09-05T20:51:16.314061"
+            "type": "security",
+            "message": "Unauthorized access detected",
+            "severity": "critical",
+            "timestamp": "2026-09-05T21:00:17.576250",
+            "action": "IMMEDIATE ACTION REQUIRED",
+            "processed_at": "2026-09-05T21:00:17.576250"
         },
         {
             "id": 5,
             "type": "system",
             "message": "System health check completed",
-            "severity": "critical",
-            "timestamp": "2026-09-05T20:51:16.314061",
-            "action": "IMMEDIATE ACTION REQUIRED",
-            "processed_at": "2026-09-05T20:51:16.314061"
+            "severity": "high",
+            "timestamp": "2026-09-05T21:00:17.576250",
+            "action": "HIGH PRIORITY ALERT",
+            "processed_at": "2026-09-05T21:00:17.577298"
         }
     ],
     "metrics": {
         "total": 5,
-        "critical": 3,
+        "critical": 1,
         "high": 1,
-        "medium": 0,
-        "low": 1
+        "medium": 1,
+        "low": 2
     }
 }
