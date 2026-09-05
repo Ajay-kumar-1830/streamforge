@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "type": "security",
+        "message": "Unauthorized access detected",
+        "severity": "low",
+        "timestamp": "2026-09-05T19:14:36.811328"
+    },
+    {
+        "id": 2,
+        "type": "temperature",
+        "message": "Temperature threshold exceeded",
+        "severity": "high",
+        "timestamp": "2026-09-05T19:14:36.811328"
+    },
+    {
+        "id": 3,
+        "type": "network",
+        "message": "Network activity detected",
+        "severity": "high",
+        "timestamp": "2026-09-05T19:14:36.811328"
+    },
+    {
+        "id": 4,
+        "type": "system",
+        "message": "System health check completed",
+        "severity": "high",
+        "timestamp": "2026-09-05T19:14:36.811328"
+    },
+    {
+        "id": 5,
+        "type": "system",
+        "message": "System health check completed",
+        "severity": "medium",
+        "timestamp": "2026-09-05T19:14:36.811328"
+    }
+]
